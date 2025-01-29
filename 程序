@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>新春祝福</title>
+    <style>
+        .container { max-width: 480px; margin: auto; }
+        canvas { background: #000; }
+        .btn { 
+            background: #C00; color: white; 
+            padding: 10px; margin: 5px;
+            border-radius: 5px; 
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <canvas id="firework"></canvas>
+    <div id="menu">
+        <div class="btn" onclick="showBlessing()">领取祝福</div>
+        <div class="btn" onclick="showZodiac()">生肖运势</div>
+    </div>
+</div>
+
+<script>
+// 烟花动画
+class Firework {
+    constructor(canvas) {
+        this.ctx = canvas.getContext('2d');
+        this.particles = [];
+    }
+
+    launch() {
+        // 实现粒子系统动画
+        const colors = ['#FF3366', '#FF9933', '#33CCFF'];
+        setInterval(() => {
+            this.ctx.clearRect(0, 0, 480, 300);
+            this.particles.push({
+                x: 240, y: 300,
+                vx: Math.random()*4-2,
+                vy: -Math.random()*8-4,
+                color: colors[Math.floor(Math.random()*3)]
+            });
+            
+            this.particles.forEach(p => {
+                p.vy += 0.1;
+                p.x += p.vx;
+                p.y += p.vy;
+                this.ctx.beginPath();
+                this.ctx.arc(p.x, p.y, 2, 0, Math.PI*2);
+                this.ctx.fillStyle = p.color;
+                this.ctx.fill();
+            });
+        }, 50);
+    }
+}
+
+// 祝福生成
+function showBlessing() {
+    const name = prompt("请输入你的名字：");
+    const blessings = [
+        `🎉 ${name} 新春快乐！<br>愿您事业如日中天，家庭幸福美满！`,
+        `🐉 ${name} 龙年大吉！<br>财源滚滚来，好运连连转！`
+    ];
+    document.getElementById("menu").innerHTML = 
+        `<div class="blessing">${blessings[Math.floor(Math.random()*2)]}</div>
+         <div class="btn" onclick="location.reload()">返回</div>`;
+}
+
+// 生肖查询
+function showZodiac() {
+    const year = prompt("请输入出生年份：");
+    const zodiacs = ["猴","鸡","狗","猪","鼠","牛","虎","兔","龙","蛇","马","羊"];
+    const idx = (year - 2020) % 12;
+    document.getElementById("menu").innerHTML = 
+        `<div class="result">
+            生肖：${zodiacs[idx]}<br>
+            运势：${["吉星高照","心想事成"][Math.floor(Math.random()*2)]}
+         </div>
+         <div class="btn" onclick="location.reload()">返回</div>`;
+}
+
+// 初始化
+window.onload = () => {
+    const canvas = document.getElementById('firework');
+    canvas.width = 480; canvas.height = 300;
+    new Firework(canvas).launch();
+};
+</script>
+</body>
+</html>
